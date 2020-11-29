@@ -1,0 +1,314 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+  description: A sample API that uses a petstore as an example to demonstrate features in the OpenAPI 3.0 specification
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Swagger API Team
+    email: apiteam@swagger.io
+    url: http://swagger.io
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: http://petstore.swagger.io/api
+paths:
+  /pets:
+    get:
+      description: |
+        Returns all pets from the system that the user has access to
+      operationId: findPets
+      parameters:
+        - name: tags
+          in: query
+          description: tags to filter by
+          required: false
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: limit
+          in: query
+          description: maximum number of results to return
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          $ref: '#/components/responses/PetListResponseBody'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      description: Creates a new pet in the store. Duplicates are allowed
+      operationId: addPet
+      requestBody:
+        $ref: '#/components/requestBodies/PostAddPet'
+      responses:
+        '200':
+          $ref: "#/components/responses/PetResponseBody"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /customers/:
+    get:
+      description: Get Customer  
+      operationId: getCustomer
+      parameters:
+        - name: tags
+          in: query
+          description: tags to filter by
+          required: false
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: limit
+          in: query
+          description: maximum number of results to return
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCustomerResponseBody'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      description: Creates a new Customer in the store.
+      operationId: postCustomer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        '200':
+          description: pet response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+                nullable: true
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /pets/{id}:
+    get:
+      description: Returns a user based on a single ID, if the user does not have access to the pet
+      operationId: find pet by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of pet to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: lang
+          in: query
+          description: Language
+          required: true
+          schema:
+            type: string
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/PetResponseBody'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      description: Returns a user based on a single ID, if the user does not have access to the pet
+      operationId: Update by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of pet to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: lang
+          in: query
+          description: Language
+          required: true
+          schema:
+            type: string
+            format: int64
+        - name: color
+          in: query
+          description: Color
+          required: false
+          schema:
+            type: string
+            format: int64
+        - name: tags
+          in: query
+          description: Tags List
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/PetResponseBody'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      description: deletes a single pet based on the ID supplied
+      operationId: deletePet
+      parameters:
+        - name: id
+          in: path
+          description: ID of pet to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: pet deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Pet:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int64
+
+    NewPet:
+      type: object
+      required:
+        - name  
+      properties:
+        name:
+          type: string
+        tag:
+          type: string 
+        color:
+          type: string
+    Customer:
+      type: object
+      required:
+        - name  
+      properties:
+        name:
+          type: string
+          nullable: true
+        email:
+          type: string 
+          minLength: 5
+          format: email
+        color:
+          type: string
+          nullable: true
+        age:
+          type: integer
+          minimum: 18
+          maximum: 65
+          description: The Age of the owner is needed here.
+        birthday:
+          type: string
+          format: date
+        verified:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items: 
+            type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  requestBodies:
+    PostAddPet:
+      description: Pet to add to the store
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - petName
+            properties:
+              petName:
+                type:
+                  string
+                minLength: 4
+                maxLength: 10
+                pattern: '[a-zA-Z0-9]'
+              petData:
+                $ref: '#/components/schemas/NewPet'
+
+  responses:
+    PetResponseBody:
+      description: pet response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Pet'
+    PetListResponseBody:
+      description: pet response
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Pet'
+    GetCustomerResponseBody:
+      description: pet response
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Customer'
+            nullable: true
