@@ -1,8 +1,9 @@
 {
   "name": "open-ts",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "OpenAPI to Typescript Code Generator",
   "main": "dist/index.js",
+  "files": ["dist/*"],
   "types": "dist/index.d.ts",
   "author": "OMER ISHAG <omer.rayah@gmail.com>",
   "license": "MIT",
