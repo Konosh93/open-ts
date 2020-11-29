@@ -2,11 +2,11 @@
   "name": "open-ts",
   "version": "0.0.1",
   "description": "OpenAPI to Typescript Code Generator",
-  "main": "index.js",
+  "main": "dist/index.js",
   "author": "OMER ISHAG <omer.rayah@gmail.com>",
   "license": "MIT",
   "bin": {
-    "openapi2ts": "bin/app"
+    "open-ts": "bin/app"
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^9.0.1",
@@ -20,7 +20,7 @@
     "lint": "eslint src/**/*.ts",
     "lint-fix": "yarn lint --fix",
     "test": "yarn build && ava dist/test/**Spec.js",
-    "publish-lib": "yarn test && npm publish && "
+    "publish-lib": "yarn test && npm publish && yarn publish"
   },
   "devDependencies": {
     "@types/fs-extra": "^8.1.0",
