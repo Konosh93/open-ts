@@ -1,4 +1,4 @@
-import { IsOptional, IsArray, IsInt, IsNotEmpty, Length, Matches, IsObject, MinLength, IsEmail, IsMin, IsMax, IsBoolean } from "class-validator";
+import { IsOptional, IsArray, IsInt, IsNotEmpty, Length, Matches, IsObject, MinLength, IsEmail, Min, Max, IsBoolean } from "class-validator";
 import { Type } from "class-transformer";
 /*
  * This file is auto-generated. Do NOT modify this file manually.
@@ -130,8 +130,8 @@ export class PostCustomerRequestBodyValidator {
      */
     @IsOptional()
     @IsInt()
-    @IsMin(18)
-    @IsMax(65)
+    @Min(18)
+    @Max(65)
     age: number;
     /**
      * birthday
