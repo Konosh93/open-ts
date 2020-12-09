@@ -1,9 +1,8 @@
 {
   "name": "open-ts",
-  "version": "0.0.6",
+  "version": "0.0.9",
   "description": "OpenAPI to Typescript Code Generator",
   "main": "dist/index.js",
-  "files": ["dist/*"],
   "types": "dist/index.d.ts",
   "author": "OMER ISHAG <omer.rayah@gmail.com>",
   "license": "MIT",
@@ -14,7 +13,8 @@
     "@apidevtools/swagger-parser": "^9.0.1",
     "commander": "^5.0.0",
     "fs-extra": "^9.0.0",
-    "json-schema-to-typescript": "^8.2.0"
+    "json-schema-to-typescript": "^8.2.0",
+    "typescript": "^3.8.3"
   },
   "scripts": {
     "clean": "del build && del node_modules",
@@ -38,7 +38,6 @@
     "@typescript-eslint/parser": "^3.5.0",
     "eslint": "^7.4.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "typescript": "^3.8.3",
     "@types/lodash": "^4.14.150"
   }
 }
