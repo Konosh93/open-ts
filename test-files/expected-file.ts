@@ -46,6 +46,7 @@ export type Customer = {
     email?: string;
     color?: string | null;
     age?: number;
+    pickupHour?: number;
     birthday?: string | Date;
     verified?: boolean;
     createdAt?: string | Date;
@@ -133,6 +134,14 @@ export class PostCustomerRequestBodyValidator {
     @Min(18)
     @Max(65)
     age: number;
+    /**
+     * The Age of the owner is needed here.
+     */
+    @IsOptional()
+    @IsInt()
+    @Min(0)
+    @Max(0)
+    pickupHour: number;
     /**
      * birthday
      */

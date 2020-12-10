@@ -245,6 +245,11 @@ components:
           minimum: 18
           maximum: 65
           description: The Age of the owner is needed here.
+        pickupHour:
+          type: integer
+          minimum: 0
+          maximum: 0
+          description: The Age of the owner is needed here.
         birthday:
           type: string
           format: date

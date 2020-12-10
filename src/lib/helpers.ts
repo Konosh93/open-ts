@@ -385,11 +385,11 @@ export default function generate(spec: OpenAPIV3.Document) {
                     classValidatorDecorators.add("IsInt");
                     dec.push(cg.createDecorator(`IsInt()`));
                 }
-                if (minimum) {
+                if (minimum != null) {
                     classValidatorDecorators.add("Min");
                     dec.push(cg.createDecorator(`Min(${minimum})`));
                 }
-                if (maximum) {
+                if (maximum != null) {
                     classValidatorDecorators.add("Max");
                     dec.push(cg.createDecorator(`Max(${maximum})`));
                 }
