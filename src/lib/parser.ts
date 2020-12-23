@@ -6,7 +6,7 @@ export async function getValidSchema(
     relPath: string
 ): Promise<OpenAPIV3.Document> {
     await SwaggerParser.validate(path.resolve(process.cwd(), relPath));
-    const result: any = await SwaggerParser.parse(
+    const result: any = await SwaggerParser.bundle(
         path.resolve(process.cwd(), relPath),
         { parse: { json: true } }
     );

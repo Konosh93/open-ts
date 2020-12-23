@@ -203,6 +203,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /file_join:
+    post:
+      description: File join test
+      operationId: post file join
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/fileJoin.yml#/NewFile'
+      responses:
+        '204':
+          description: file posted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   schemas:
     Pet:

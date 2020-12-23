@@ -65,6 +65,16 @@ export type UpdateByIdQuery = {
     tags?: string[];
 };
 export type UpdateByIdResponseBody = Pet;
+export type PostFileJoinRequestBody = {
+    name: string;
+    "type"?: string;
+    data?: {
+        filename: string;
+        small: string;
+        medium: string;
+        large: string;
+    } | null;
+};
 export class FindPetsQueryValidator {
     /**
      * tags to filter by
@@ -195,6 +205,29 @@ export class UpdateByIdQueryValidator {
     @IsArray()
     tags: string[];
 }
+export class PostFileJoinRequestBodyValidator {
+    /**
+     * name
+     */
+    @IsNotEmpty()
+    name: string;
+    /**
+     * type
+     */
+    @IsOptional()
+    type: string;
+    /**
+     * data
+     */
+    @IsOptional()
+    @IsObject()
+    data: {
+        filename: string;
+        small: string;
+        medium: string;
+        large: string;
+    };
+}
 export default class APIAgent {
     httpClient: HTTPClient;
     constructor(httpClient: HTTPClient) {
@@ -242,5 +275,11 @@ export default class APIAgent {
      */
     async deletePet(id: number) {
         return await this.httpClient.delete(`/pets/${id}`, {});
+    }
+    /**
+     * File join test
+     */
+    async postFileJoin(body: PostFileJoinRequestBody) {
+        return await this.httpClient.post("/file_join", body, {});
     }
 }

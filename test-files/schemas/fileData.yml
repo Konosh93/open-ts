@@ -1,0 +1,16 @@
+FileData:
+  type: object
+  required:
+    - filename
+    - small
+    - medium
+    - large
+  properties:
+    filename:
+      type: string
+    small:
+      type: string
+    medium:
+      type: string
+    large:
+      type: string
