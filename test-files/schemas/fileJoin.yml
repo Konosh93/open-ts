@@ -1,0 +1,13 @@
+NewFile:
+  description: file data is recursive join
+  type: object
+  required:
+    - name
+  properties:
+    name:
+      type: string
+    type:
+      type: string
+    data:
+      $ref: './fileData.yml#/FileData'
+      nullable: true
