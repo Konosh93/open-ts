@@ -8,6 +8,9 @@
 ### OpenAPI enums generator
 - Generate openAPI enums as yaml file from all enums found in TS files within a specified directory.
 
+### Multi-file support
+- Allow using refs to external files.
+
 ## 0.0.11 (December 10, 2020)
 - Fix bug caused by wrong null check.
 When `minimum` or `maximum` is set to 0, `Min` and `Max` validators are not created.
