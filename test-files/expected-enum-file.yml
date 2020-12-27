@@ -1,0 +1,41 @@
+Supported:
+  type: number
+  enum:
+    - 0
+    - 1
+    - 2
+WithDefault:
+  type: number
+  enum:
+    - 0
+    - 1
+    - 2
+WithStarter:
+  type: number
+  enum:
+    - 1
+    - 2
+    - 3
+Texts:
+  type: string
+  enum:
+    - foo
+    - bar
+Numbers:
+  type: number
+  enum:
+    - 1
+    - 2
+SpecialString:
+  type: string
+  enum:
+    - '07'
+    - 08
+    - 09
+    - '10'
+    - '01234'
+    - 01238
+Exported:
+  type: string
+  enum:
+    - foo

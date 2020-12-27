@@ -3,6 +3,13 @@ import * as path from "path";
 import * as ts from "typescript";
 import * as _ from "lodash";
 import * as yaml from "js-yaml";
+import * as logs from "../utils/logs";
+
+export function warn(file: string, enumName: string, msg: string): void {
+    logs.warn(
+        `   [WARNING] Unsupported enum '${enumName}' detected in:  ${file} \n    ${msg}`
+    );
+}
 
 async function getFilesRecursively(startPath: string, res: string[]) {
     if (!(await fs.pathExists(startPath))) {
@@ -75,25 +82,35 @@ export async function convertEnums(
             ts.forEachChild(node, traverseNode);
         }
 
-        function getSupportedType(enumNode: ts.EnumDeclaration) {
-            const enumTye = typeof checker.getConstantValue(
-                enumNode.members[0]
-            );
-            if (enumTye !== "string" && enumTye !== "number") {
-                console.warn("Unsupported enum file detected: ", tsFile);
-                return null;
-            }
-            enumNode.members.forEach(item => {
-                const value = checker.getConstantValue(item);
-                if (typeof value !== enumTye) {
-                    console.warn(
-                        "Heterogenous enums are not supported: ",
-                        tsFile
+        function getSupportedType(
+            enumNode: ts.EnumDeclaration
+        ): "string" | "number" | null {
+            const enumTypeOrNull = (() => {
+                const enumType = typeof checker.getConstantValue(
+                    enumNode.members[0]
+                );
+                if (enumType !== "string" && enumType !== "number") {
+                    warn(
+                        tsFile,
+                        enumNode.name.getText(),
+                        "Unsupported Type: " + enumType
                     );
                     return null;
                 }
-            });
-            return enumTye;
+                for (const item of enumNode.members) {
+                    const value = checker.getConstantValue(item);
+                    if (typeof value !== enumType) {
+                        warn(
+                            tsFile,
+                            enumNode.name.getText(),
+                            "Mixed Types: " + enumType + " and " + typeof value
+                        );
+                        return null;
+                    }
+                }
+                return enumType;
+            })();
+            return enumTypeOrNull;
         }
 
         traverseNode(source);
@@ -103,10 +120,10 @@ export async function convertEnums(
 }
 
 async function generateYamlFile(outputFile: string, files: EnumFile[]) {
-    const schemas = {};
+    const enums = {};
     files.forEach(f => {
-        schemas[f.name] = { type: f.type, enum: f.items };
+        enums[f.name] = { type: f.type, enum: f.items };
     });
-    const yamlData = yaml.safeDump({ components: { schemas } });
+    const yamlData = yaml.safeDump(enums);
     await fs.writeFile(outputFile, yamlData);
 }
