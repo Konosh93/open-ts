@@ -28,7 +28,11 @@ test.before(async () => {
     }
 });
 test.beforeEach(async () => {
-    await fs.unlink(OUTPUT_FILE);
+    try {
+        await fs.unlink(OUTPUT_FILE);
+    } catch (error) {
+        // no op
+    }
     sandbox.stub(logs, "warn");
 });
 

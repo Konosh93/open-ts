@@ -115,7 +115,13 @@ export async function convertEnums(
 
         traverseNode(source);
     });
-
+    // NOTE: Add sorting to unify output
+    output.sort((a, b) => {
+        if (a.name < b.name) {
+            return -1;
+        }
+        return 1;
+    });
     generateYamlFile(destFile, output);
 }
 
