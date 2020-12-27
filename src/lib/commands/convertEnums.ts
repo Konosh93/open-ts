@@ -3,7 +3,7 @@ import * as path from "path";
 import * as ts from "typescript";
 import * as _ from "lodash";
 import * as yaml from "js-yaml";
-import * as logs from "../utils/logs";
+import * as logs from "../../utils/logs";
 
 export function warn(file: string, enumName: string, msg: string): void {
     logs.warn(

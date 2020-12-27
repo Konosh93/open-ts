@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import * as program from "commander";
 import { generateAPIClient } from "./lib";
-import { convertEnums } from "./lib/convertEnums";
+import { convertEnums } from "./lib/commands/convertEnums";
 
 const version = require("../package.json").version;
 program.version(version);

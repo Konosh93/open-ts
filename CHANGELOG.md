@@ -1,4 +1,4 @@
-## 1.0.0 (December 10, 2020)
+## 1.0.0 (December 27, 2020)
 ### Add sub-commands:
 ```
   gen-agent <sourceFile> <destinationFile>    Generate API Agent
