@@ -3,7 +3,7 @@ import * as path from "path";
 import * as ts from "typescript";
 import * as _ from "lodash";
 import * as yaml from "js-yaml";
-import * as logs from "../utils/logs";
+import * as logs from "../../utils/logs";
 
 export function warn(file: string, enumName: string, msg: string): void {
     logs.warn(
@@ -115,7 +115,13 @@ export async function convertEnums(
 
         traverseNode(source);
     });
-
+    // NOTE: Add sorting to unify output
+    output.sort((a, b) => {
+        if (a.name < b.name) {
+            return -1;
+        }
+        return 1;
+    });
     generateYamlFile(destFile, output);
 }
 

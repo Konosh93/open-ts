@@ -1,6 +1,6 @@
 {
   "name": "open-ts",
-  "version": "0.0.11",
+  "version": "1.0.0",
   "description": "OpenAPI to Typescript Code Generator",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

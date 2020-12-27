@@ -1,26 +1,7 @@
-Supported:
-  type: number
-  enum:
-    - 0
-    - 1
-    - 2
-WithDefault:
-  type: number
-  enum:
-    - 0
-    - 1
-    - 2
-WithStarter:
-  type: number
-  enum:
-    - 1
-    - 2
-    - 3
-Texts:
+Exported:
   type: string
   enum:
     - foo
-    - bar
 Numbers:
   type: number
   enum:
@@ -35,7 +16,26 @@ SpecialString:
     - '10'
     - '01234'
     - 01238
-Exported:
+Supported:
+  type: number
+  enum:
+    - 0
+    - 1
+    - 2
+Texts:
   type: string
   enum:
     - foo
+    - bar
+WithDefault:
+  type: number
+  enum:
+    - 0
+    - 1
+    - 2
+WithStarter:
+  type: number
+  enum:
+    - 1
+    - 2
+    - 3

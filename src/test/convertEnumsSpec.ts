@@ -1,7 +1,7 @@
 import * as ava from "ava";
 import * as path from "path";
 import * as fs from "fs-extra";
-import { convertEnums } from "../lib/convertEnums";
+import { convertEnums } from "../lib/commands/convertEnums";
 import * as sinon from "sinon";
 import * as logs from "../utils/logs";
 
@@ -28,7 +28,11 @@ test.before(async () => {
     }
 });
 test.beforeEach(async () => {
-    await fs.unlink(OUTPUT_FILE);
+    try {
+        await fs.unlink(OUTPUT_FILE);
+    } catch (error) {
+        // no op
+    }
     sandbox.stub(logs, "warn");
 });
 
