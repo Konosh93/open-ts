@@ -199,7 +199,7 @@ export default function generate(spec: OpenAPIV3.Document) {
         if (schema.enum) {
             return ts.createUnionTypeNode(
                 schema.enum.map(s =>
-                    ts.createLiteralTypeNode(ts.createStringLiteral(s))
+                    ts.createLiteralTypeNode(ts.createLiteral(s))
                 )
             );
         }

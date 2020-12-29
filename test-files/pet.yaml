@@ -292,6 +292,16 @@ components:
           format: int32
         message:
           type: string
+    NumberEnum:
+      type: number
+      enum:
+        - 1
+        - 2
+    StringEnum:
+      type: string
+      enum:
+        - a
+        - b
   requestBodies:
     PostAddPet:
       description: Pet to add to the store
@@ -311,6 +321,10 @@ components:
                 pattern: '[a-zA-Z0-9]'
               petData:
                 $ref: '#/components/schemas/NewPet'
+              petNumberType:
+                $ref: '#/components/schemas/NumberEnum'
+              petStringType:
+                $ref: '#/components/schemas/StringEnum'
 
   responses:
     PetResponseBody:
