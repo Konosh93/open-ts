@@ -1,3 +1,7 @@
+## 1.0.1 (December 27, 2020)
+- Fix bug when number enums are found in the specs file.
+  - Target Command: `gen-agent`
+
 ## 1.0.0 (December 27, 2020)
 ### Add sub-commands:
 ```
