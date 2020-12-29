@@ -32,9 +32,13 @@ export type NewPet = {
     tag?: string;
     color?: string;
 };
+export type NumberEnum = 1 | 2;
+export type StringEnum = "a" | "b";
 export type AddPetRequestBody = {
     petName: string;
     petData?: NewPet;
+    petNumberType?: NumberEnum;
+    petStringType?: StringEnum;
 };
 export type AddPetResponseBody = Pet;
 export type GetCustomerQuery = {
@@ -103,6 +107,16 @@ export class AddPetRequestBodyValidator {
     @IsOptional()
     @IsObject()
     petData: NewPet;
+    /**
+     * petNumberType
+     */
+    @IsOptional()
+    petNumberType: NumberEnum;
+    /**
+     * petStringType
+     */
+    @IsOptional()
+    petStringType: StringEnum;
 }
 export class GetCustomerQueryValidator {
     /**
