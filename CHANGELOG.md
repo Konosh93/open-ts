@@ -2,6 +2,24 @@
 - Fix bug when number enums are found in the specs file.
   - Target Command: `gen-agent`
 
+```yml
+    NumberEnum:
+      type: number
+      enum:
+        - 1
+        - 2
+    StringEnum:
+      type: string
+      enum:
+        - a
+        - b
+```
+
+```ts
+export type NumberEnum = 1 | 2;
+export type StringEnum = "a" | "b";
+```
+
 ## 1.0.0 (December 27, 2020)
 ### Add sub-commands:
 ```
