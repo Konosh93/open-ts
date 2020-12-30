@@ -302,6 +302,8 @@ components:
       enum:
         - a
         - b
+    PetExternalEnum:
+      $ref: './schemas/fileJoin.yml#/ExternalEnum'
   requestBodies:
     PostAddPet:
       description: Pet to add to the store
@@ -325,6 +327,8 @@ components:
                 $ref: '#/components/schemas/NumberEnum'
               petStringType:
                 $ref: '#/components/schemas/StringEnum'
+              petExternalEnum:
+                $ref: '#/components/schemas/PetExternalEnum'
 
   responses:
     PetResponseBody:

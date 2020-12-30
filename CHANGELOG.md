@@ -1,4 +1,43 @@
-## 1.0.1 (December 27, 2020)
+## 1.0.2 (December 30, 2020)
+- Allow generating Typescript enums for validation.
+  - Target Command: `gen-agent`
+
+```yml
+    NumberEnum:
+      type: number
+      enum:
+        - 1
+        - 2
+    StringEnum:
+      type: string
+      enum:
+        - a
+        - b
+```
+
+```ts
+enum NumberEnumEnum {
+    _1 = 1,
+    _2 = 2
+}
+enum StringEnumEnum {
+    _a = "a",
+    _b = "b"
+}
+```
+
+Validation
+
+```ts
+    /**
+     * petNumberType
+     */
+    @IsOptional()
+    @IsEnum(NumberEnumEnum)
+    petNumberType: NumberEnum;
+```
+
+## 1.0.1 (December 29, 2020)
 - Fix bug when number enums are found in the specs file.
   - Target Command: `gen-agent`
 

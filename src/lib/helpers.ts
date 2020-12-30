@@ -107,6 +107,7 @@ function queryParamsToObject(
 
 export default function generate(spec: OpenAPIV3.Document) {
     const typeDefinitions: ts.TypeAliasDeclaration[] = [];
+    const enumDeclarations: ts.EnumDeclaration[] = [];
     const classes: ts.ClassDeclaration[] = [];
     const imports: ts.ImportDeclaration[] = [];
     const classValidatorDecorators = new Set<string>();
@@ -128,14 +129,22 @@ export default function generate(spec: OpenAPIV3.Document) {
     }
 
     const refsMap: { [ref: string]: ts.TypeReferenceNode } = {};
+    const enumRefsMap: { [ref: string]: string } = {};
 
     function getRefAlias(obj: OpenAPIV3.ReferenceObject) {
         const { $ref } = obj;
         let ref = refsMap[$ref];
         if (!ref) {
             const schema = resolveIfRef<OpenAPIV3.SchemaObject>(obj);
-
             const name = schema.title || $ref.replace(/.+\//, "");
+
+            if (schema.enum) {
+                const enumName = name + "Enum";
+                const enumNode = cg.createEnum(name + "Enum", schema.enum);
+                enumRefsMap[$ref] = enumName;
+                enumDeclarations.push(enumNode);
+            }
+
             ref = refsMap[$ref] = ts.createTypeReferenceNode(name, undefined);
 
             const type = getTypeFromSchema(schema);
@@ -149,7 +158,6 @@ export default function generate(spec: OpenAPIV3.Document) {
         }
         return ref;
     }
-
     function getTypeFromSchema(
         schema?: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject
     ): ts.TypeNode {
@@ -193,14 +201,6 @@ export default function generate(spec: OpenAPIV3.Document) {
                 schema.properties || {},
                 schema.required,
                 schema.additionalProperties
-            );
-        }
-
-        if (schema.enum) {
-            return ts.createUnionTypeNode(
-                schema.enum.map(s =>
-                    ts.createLiteralTypeNode(ts.createLiteral(s))
-                )
             );
         }
 
@@ -334,7 +334,8 @@ export default function generate(spec: OpenAPIV3.Document) {
 
     function createValidatorAndTransformers(
         params: OpenAPIV3.SchemaObject,
-        isRequired: boolean
+        isRequired: boolean,
+        enumName?: string
     ) {
         const dec: ts.Decorator[] = [];
         if (isRequired) {
@@ -343,6 +344,11 @@ export default function generate(spec: OpenAPIV3.Document) {
         } else {
             classValidatorDecorators.add("IsOptional");
             dec.push(cg.createDecorator("IsOptional()"));
+        }
+
+        if (enumName) {
+            classValidatorDecorators.add("IsEnum");
+            dec.push(cg.createDecorator(`IsEnum(${enumName})`));
         }
 
         switch (params.type) {
@@ -430,12 +436,16 @@ export default function generate(spec: OpenAPIV3.Document) {
             cg.createClassDeclaration({
                 modifiers: [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
                 members: Object.keys(properties).map(p => {
-                    const obj = resolveIfRef(properties[p]);
+                    const property = properties[p];
+                    const obj = resolveIfRef(property);
                     return cg.addComment(
                         cg.createProperty(p, {
                             decorators: createValidatorAndTransformers(
                                 obj,
-                                requiredMap[p]
+                                requiredMap[p],
+                                isReference(property)
+                                    ? enumRefsMap[property.$ref]
+                                    : undefined
                             ),
                             type: getBaseTypeFromSchema(properties[p], {
                                 castDateFromString: true
@@ -468,6 +478,7 @@ export default function generate(spec: OpenAPIV3.Document) {
                 description
             } = op;
             const operationName = getOperationIdentifier(operationId);
+
             if (!operationName) {
                 throw new Error("Invalid: operationId is missing");
             }
@@ -633,16 +644,16 @@ export default function generate(spec: OpenAPIV3.Document) {
             ts.createLiteral("class-transformer")
         )
     );
-
-    baseFile.statements = cg.appendNodes(
-        imports,
-        baseFile.statements,
+    const completeFile = ts.factory.updateSourceFile(baseFile, [
+        ...imports,
+        ...baseFile.statements,
         ...typeDefinitions,
+        ...enumDeclarations,
         ...classes,
         apiAgentClass
-    );
+    ]);
 
-    return baseFile;
+    return completeFile;
 
     function getTypeAlias(bodySchema: any, bodyName: string) {
         const bodType = getTypeFromSchema(bodySchema);
