@@ -26,7 +26,7 @@ enum StringEnumEnum {
 }
 ```
 
-Validation
+### Validation
 
 ```ts
     /**
