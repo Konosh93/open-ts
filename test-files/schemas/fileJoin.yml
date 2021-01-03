@@ -11,3 +11,8 @@ NewFile:
     data:
       $ref: './fileData.yml#/FileData'
       nullable: true
+ExternalEnum:
+  type: number
+  enum:
+    - 1
+    - 2

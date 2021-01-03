@@ -1,4 +1,4 @@
-import { IsOptional, IsArray, IsInt, IsNotEmpty, Length, Matches, IsObject, MinLength, IsEmail, Min, Max, IsBoolean } from "class-validator";
+import { IsOptional, IsArray, IsInt, IsNotEmpty, Length, Matches, IsObject, IsEnum, MinLength, IsEmail, Min, Max, IsBoolean } from "class-validator";
 import { Type } from "class-transformer";
 /*
  * This file is auto-generated. Do NOT modify this file manually.
@@ -32,13 +32,15 @@ export type NewPet = {
     tag?: string;
     color?: string;
 };
-export type NumberEnum = 1 | 2;
-export type StringEnum = "a" | "b";
+export type NumberEnum = number;
+export type StringEnum = string;
+export type PetExternalEnum = number;
 export type AddPetRequestBody = {
     petName: string;
     petData?: NewPet;
     petNumberType?: NumberEnum;
     petStringType?: StringEnum;
+    petExternalEnum?: PetExternalEnum;
 };
 export type AddPetResponseBody = Pet;
 export type GetCustomerQuery = {
@@ -79,6 +81,18 @@ export type PostFileJoinRequestBody = {
         large: string;
     } | null;
 };
+enum NumberEnumEnum {
+    _1 = 1,
+    _2 = 2
+}
+enum StringEnumEnum {
+    _a = "a",
+    _b = "b"
+}
+enum PetExternalEnumEnum {
+    _1 = 1,
+    _2 = 2
+}
 export class FindPetsQueryValidator {
     /**
      * tags to filter by
@@ -111,12 +125,20 @@ export class AddPetRequestBodyValidator {
      * petNumberType
      */
     @IsOptional()
+    @IsEnum(NumberEnumEnum)
     petNumberType: NumberEnum;
     /**
      * petStringType
      */
     @IsOptional()
+    @IsEnum(StringEnumEnum)
     petStringType: StringEnum;
+    /**
+     * petExternalEnum
+     */
+    @IsOptional()
+    @IsEnum(PetExternalEnumEnum)
+    petExternalEnum: PetExternalEnum;
 }
 export class GetCustomerQueryValidator {
     /**

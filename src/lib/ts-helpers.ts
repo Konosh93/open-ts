@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import * as fs from "fs";
 import * as ts from "typescript";
 
@@ -11,7 +12,9 @@ type KeywordTypeName =
     | "undefined"
     | "null";
 
-export const questionToken = ts.createToken(ts.SyntaxKind.QuestionToken);
+export const questionToken = ts.factory.createToken(
+    ts.SyntaxKind.QuestionToken
+);
 
 export function createQuestionToken(token?: boolean | ts.QuestionToken) {
     if (!token) return undefined;
@@ -22,38 +25,48 @@ export function createQuestionToken(token?: boolean | ts.QuestionToken) {
 export function createKeywordType(type: KeywordTypeName) {
     switch (type) {
         case "any":
-            return ts.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword);
+            return ts.factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword);
         case "number":
-            return ts.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword);
+            return ts.factory.createKeywordTypeNode(
+                ts.SyntaxKind.NumberKeyword
+            );
         case "object":
-            return ts.createKeywordTypeNode(ts.SyntaxKind.ObjectKeyword);
+            return ts.factory.createKeywordTypeNode(
+                ts.SyntaxKind.ObjectKeyword
+            );
         case "string":
-            return ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
+            return ts.factory.createKeywordTypeNode(
+                ts.SyntaxKind.StringKeyword
+            );
         case "boolean":
-            return ts.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword);
+            return ts.factory.createKeywordTypeNode(
+                ts.SyntaxKind.BooleanKeyword
+            );
         case "undefined":
-            return ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword);
+            return ts.factory.createKeywordTypeNode(
+                ts.SyntaxKind.UndefinedKeyword
+            );
         case "null":
-            return ts.createKeywordTypeNode(ts.SyntaxKind.NullKeyword);
+            return ts.factory.createNull();
     }
 }
 
 export const keywordType: {
     [type: string]: ts.KeywordTypeNode;
 } = {
-    any: ts.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword),
-    number: ts.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
-    object: ts.createKeywordTypeNode(ts.SyntaxKind.ObjectKeyword),
-    string: ts.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
-    boolean: ts.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword),
-    undefined: ts.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword),
-    null: ts.createKeywordTypeNode(ts.SyntaxKind.NullKeyword),
-    Date: ts.createTypeReferenceNode("Date", []) as any
+    any: ts.factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword),
+    number: ts.factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
+    object: ts.factory.createKeywordTypeNode(ts.SyntaxKind.ObjectKeyword),
+    string: ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+    boolean: ts.factory.createKeywordTypeNode(ts.SyntaxKind.BooleanKeyword),
+    undefined: ts.factory.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword),
+    null: ts.factory.createNull() as any,
+    Date: ts.factory.createTypeReferenceNode("Date", []) as any
 };
 
 export const modifier = {
-    async: ts.createModifier(ts.SyntaxKind.AsyncKeyword),
-    export: ts.createModifier(ts.SyntaxKind.ExportKeyword)
+    async: ts.factory.createModifier(ts.SyntaxKind.AsyncKeyword),
+    export: ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)
 };
 
 export function createTypeAliasDeclaration({
@@ -69,7 +82,7 @@ export function createTypeAliasDeclaration({
     typeParameters?: Array<ts.TypeParameterDeclaration>;
     type: ts.TypeNode;
 }) {
-    return ts.createTypeAliasDeclaration(
+    return ts.factory.createTypeAliasDeclaration(
         decorators,
         modifiers,
         name,
@@ -79,7 +92,7 @@ export function createTypeAliasDeclaration({
 }
 
 export function toExpression(ex: ts.Expression | string) {
-    if (typeof ex === "string") return ts.createIdentifier(ex);
+    if (typeof ex === "string") return ts.factory.createIdentifier(ex);
     return ex;
 }
 
@@ -103,7 +116,10 @@ export function createMethodCall(
         args?: Array<ts.Expression>;
     }
 ) {
-    return createCall(ts.createPropertyAccess(ts.createThis(), method), opts);
+    return createCall(
+        ts.createPropertyAccess(ts.factory.createThis(), method),
+        opts
+    );
 }
 
 export function createObjectLiteral(props: [string, string | ts.Expression][]) {
@@ -121,14 +137,14 @@ export function createPropertyAssignment(
 ) {
     if (ts.isIdentifier(expression)) {
         if (expression.text === name) {
-            return ts.createShorthandPropertyAssignment(name);
+            return ts.factory.createShorthandPropertyAssignment(name);
         }
     }
-    return ts.createPropertyAssignment(propertyName(name), expression);
+    return ts.factory.createPropertyAssignment(propertyName(name), expression);
 }
 
 export function block(...statements: ts.Statement[]) {
-    return ts.createBlock(statements, true);
+    return ts.factory.createBlock(statements, true);
 }
 
 export function createArrowFunction(
@@ -146,7 +162,7 @@ export function createArrowFunction(
         equalsGreaterThanToken?: ts.EqualsGreaterThanToken;
     } = {}
 ) {
-    return ts.createArrowFunction(
+    return ts.factory.createArrowFunction(
         modifiers,
         typeParameters,
         parameters,
@@ -174,7 +190,7 @@ export function createFunctionDeclaration(
     parameters: ts.ParameterDeclaration[],
     body?: ts.Block
 ): ts.FunctionDeclaration {
-    return ts.createFunctionDeclaration(
+    return ts.factory.createFunctionDeclaration(
         decorators,
         modifiers,
         asteriskToken,
@@ -201,7 +217,7 @@ export function createClassDeclaration({
     heritageClauses?: Array<ts.HeritageClause>;
     members: Array<ts.ClassElement>;
 }) {
-    return ts.createClassDeclaration(
+    return ts.factory.createClassDeclaration(
         decorators,
         modifiers,
         name,
@@ -324,8 +340,8 @@ export function createProperty(
 function propertyName(name: string | ts.PropertyName): ts.PropertyName {
     if (typeof name === "string") {
         return isValidIdentifier(name)
-            ? ts.createIdentifier(name)
-            : ts.createStringLiteral(name);
+            ? ts.factory.createIdentifier(name)
+            : ts.factory.createStringLiteral(name);
     }
     return name;
 }
@@ -382,9 +398,9 @@ export function createObjectBinding(
         initializer?: ts.Expression;
     }>
 ) {
-    return ts.createObjectBindingPattern(
+    return ts.factory.createObjectBindingPattern(
         elements.map(({ dotDotDotToken, propertyName, name, initializer }) =>
-            ts.createBindingElement(
+            ts.factory.createBindingElement(
                 dotDotDotToken,
                 propertyName,
                 name,
@@ -398,15 +414,15 @@ export function createTemplateString(
     head: string,
     spans: Array<{ literal: string; expression: ts.Expression }>
 ) {
-    if (!spans.length) return ts.createStringLiteral(head);
-    return ts.createTemplateExpression(
-        ts.createTemplateHead(head),
+    if (!spans.length) return ts.factory.createStringLiteral(head);
+    return ts.factory.createTemplateExpression(
+        ts.factory.createTemplateHead(head),
         spans.map(({ expression, literal }, i) =>
-            ts.createTemplateSpan(
+            ts.factory.createTemplateSpan(
                 expression,
                 i === spans.length - 1
-                    ? ts.createTemplateTail(literal)
-                    : ts.createTemplateMiddle(literal)
+                    ? ts.factory.createTemplateTail(literal)
+                    : ts.factory.createTemplateMiddle(literal)
             )
         )
     );
@@ -462,7 +478,8 @@ export function changePropertyValue(
         p => ts.isPropertyAssignment(p) && getName(p.name) === property
     );
     if (p && ts.isPropertyAssignment(p)) {
-        p.initializer = value;
+        ts.factory.createAssignment(p.initializer, value);
+        // p.initializer = value;
     } else {
         throw new Error(`No such property: ${property}`);
     }
@@ -473,7 +490,7 @@ export function appendNodes<T extends ts.Node>(
     array: ts.NodeArray<T>,
     ...nodes: T[]
 ) {
-    return ts.createNodeArray([...beforeNodes, ...array, ...nodes]);
+    return ts.factory.createNodeArray([...beforeNodes, ...array, ...nodes]);
 }
 
 export function addComment<T extends ts.Node>(node: T, comment?: string) {
@@ -534,10 +551,27 @@ export function isValidIdentifier(str: string) {
     return (
         !!node &&
         node.kind === ts.SyntaxKind.Identifier &&
-        !("originalKeywordKind" in node)
+        !node.originalKeywordKind
     );
 }
 
 export function createDecorator(txt: string) {
-    return ts.createDecorator(toExpression(txt));
+    return ts.factory.createDecorator(toExpression(txt));
+}
+
+export function createEnum(name: string, values: (string | number)[]) {
+    const members = values.map(v =>
+        ts.factory.createEnumMember(
+            "_" + v,
+            typeof v === "string"
+                ? ts.factory.createStringLiteral(v)
+                : ts.factory.createNumericLiteral(v)
+        )
+    );
+    return ts.factory.createEnumDeclaration(
+        undefined,
+        undefined,
+        name,
+        members
+    );
 }
