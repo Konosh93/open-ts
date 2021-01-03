@@ -329,7 +329,10 @@ components:
                 $ref: '#/components/schemas/StringEnum'
               petExternalEnum:
                 $ref: '#/components/schemas/PetExternalEnum'
-
+              petListEnum:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StringEnum'
   responses:
     PetResponseBody:
       description: pet response
