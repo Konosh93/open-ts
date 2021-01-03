@@ -41,6 +41,7 @@ export type AddPetRequestBody = {
     petNumberType?: NumberEnum;
     petStringType?: StringEnum;
     petExternalEnum?: PetExternalEnum;
+    petListEnum?: StringEnum[];
 };
 export type AddPetResponseBody = Pet;
 export type GetCustomerQuery = {
@@ -139,6 +140,13 @@ export class AddPetRequestBodyValidator {
     @IsOptional()
     @IsEnum(PetExternalEnumEnum)
     petExternalEnum: PetExternalEnum;
+    /**
+     * petListEnum
+     */
+    @IsOptional()
+    @IsArray()
+    @IsEnum(StringEnumEnum, { each: true })
+    petListEnum: StringEnum[];
 }
 export class GetCustomerQueryValidator {
     /**

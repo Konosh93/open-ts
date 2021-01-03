@@ -1,3 +1,24 @@
+## 1.0.3 (January 3, 2021)
+- Allow class validator to validate array of enums.
+  - Target Command: `gen-agent`
+
+```yml
+  petListEnum:
+    type: array
+    items:
+      $ref: '#/components/schemas/StringEnum'
+```
+
+```ts
+    /**
+     * petListEnum
+     */
+    @IsOptional()
+    @IsArray()
+    @IsEnum(StringEnumEnum, { each: true })
+    petListEnum: StringEnum[];
+```
+
 ## 1.0.2 (December 30, 2020)
 - Allow generating Typescript enums for validation.
   - Target Command: `gen-agent`

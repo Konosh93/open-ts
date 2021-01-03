@@ -409,6 +409,15 @@ export default function generate(spec: OpenAPIV3.Document) {
             case "array": {
                 classValidatorDecorators.add("IsArray");
                 dec.push(cg.createDecorator(`IsArray()`));
+                if (isReference(params.items)) {
+                    const enumNameForArray = enumRefsMap[params.items.$ref];
+                    classValidatorDecorators.add("IsEnum");
+                    dec.push(
+                        cg.createDecorator(
+                            `IsEnum(${enumNameForArray}, { each: true })`
+                        )
+                    );
+                }
                 return dec;
             }
             case "object": {
