@@ -1,5 +1,5 @@
 ## 1.0.4 (January 6, 2021)
-- Allow required nullable parameters by adding conditional validation using `ValidateIf`.
+- Allow validating required nullable parameters by adding conditional validation using `ValidateIf`.
   - Target Command: `gen-agent`
 
 ```yml
