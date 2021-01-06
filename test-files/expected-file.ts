@@ -1,4 +1,4 @@
-import { IsOptional, IsArray, IsInt, IsNotEmpty, Length, Matches, IsObject, IsEnum, MinLength, IsEmail, Min, Max, IsBoolean } from "class-validator";
+import { IsOptional, IsArray, IsInt, IsNotEmpty, Length, Matches, IsObject, IsEnum, ValidateIf, MinLength, IsEmail, Min, Max, IsBoolean } from "class-validator";
 import { Type } from "class-transformer";
 /*
  * This file is auto-generated. Do NOT modify this file manually.
@@ -50,11 +50,11 @@ export type GetCustomerQuery = {
 };
 export type Customer = {
     name: string | null;
+    birthday?: (string | Date) | null;
     email?: string;
-    color?: string | null;
+    color?: string;
     age?: number;
     pickupHour?: number;
-    birthday?: string | Date;
     verified?: boolean;
     createdAt?: string | Date;
     tags?: string[];
@@ -167,7 +167,14 @@ export class PostCustomerRequestBodyValidator {
      * name
      */
     @IsNotEmpty()
+    @ValidateIf(o => o.name !== null)
     name: string;
+    /**
+     * birthday
+     */
+    @IsOptional()
+    @Type(() => Date)
+    birthday: Date;
     /**
      * email
      */
@@ -196,12 +203,6 @@ export class PostCustomerRequestBodyValidator {
     @Min(0)
     @Max(0)
     pickupHour: number;
-    /**
-     * birthday
-     */
-    @IsOptional()
-    @Type(() => Date)
-    birthday: Date;
     /**
      * verified
      */

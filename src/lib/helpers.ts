@@ -334,16 +334,27 @@ export default function generate(spec: OpenAPIV3.Document) {
 
     function createValidatorAndTransformers(
         params: OpenAPIV3.SchemaObject,
+        propName: string,
         isRequired: boolean,
         enumName?: string
     ) {
+        // console.log(propName, isNullable(params));
         const dec: ts.Decorator[] = [];
+        let isOptional = false;
         if (isRequired) {
             classValidatorDecorators.add("IsNotEmpty");
             dec.push(cg.createDecorator("IsNotEmpty()"));
         } else {
+            isOptional = true;
             classValidatorDecorators.add("IsOptional");
             dec.push(cg.createDecorator("IsOptional()"));
+        }
+
+        if (!isOptional && isNullable(params)) {
+            classValidatorDecorators.add("ValidateIf");
+            dec.push(
+                cg.createDecorator(`ValidateIf(o => o.${propName} !== null)`)
+            );
         }
 
         if (enumName) {
@@ -451,6 +462,7 @@ export default function generate(spec: OpenAPIV3.Document) {
                         cg.createProperty(p, {
                             decorators: createValidatorAndTransformers(
                                 obj,
+                                p,
                                 requiredMap[p],
                                 isReference(property)
                                     ? enumRefsMap[property.$ref]

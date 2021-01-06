@@ -1,3 +1,37 @@
+## 1.0.4 (January 6, 2021)
+- Allow required nullable parameters by adding conditional validation using `ValidateIf`.
+  - Target Command: `gen-agent`
+
+```yml
+    Customer:
+      type: object
+      required:
+        - name  
+      properties:
+        name:
+          type: string
+          nullable: true
+        birthday:
+          type: string
+          format: date
+          nullable: true
+```
+
+```ts
+    /**
+     * name
+     */
+    @IsNotEmpty()
+    @ValidateIf(o => o.name !== null)
+    name: string;
+    /**
+     * birthday
+     */
+    @IsOptional()
+    @Type(() => Date)
+    birthday: Date;
+```
+
 ## 1.0.3 (January 3, 2021)
 - Allow class validator to validate array of enums.
   - Target Command: `gen-agent`
