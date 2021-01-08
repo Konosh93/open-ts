@@ -3,6 +3,7 @@ import * as ts from "typescript";
 import * as path from "path";
 import { OpenAPIV3 } from "openapi-types";
 import * as cg from "./ts-helpers";
+import * as logs from "../utils/logs";
 
 const verbs = [
     "GET",
@@ -197,6 +198,7 @@ export default function generate(spec: OpenAPIV3.Document) {
         }
 
         if (schema.properties || schema.additionalProperties) {
+            checkRequiredProperties(schema);
             return getTypeFromProperties(
                 schema.properties || {},
                 schema.required,
@@ -239,6 +241,15 @@ export default function generate(spec: OpenAPIV3.Document) {
         }
     }
 
+    function checkRequiredProperties(schema: OpenAPIV3.NonArraySchemaObject) {
+        const properties = schema.properties || {};
+        const all = Object.keys(properties).join(", ");
+        (schema.required || []).forEach(key => {
+            if (!(key in properties)) {
+                logs.warn(`WARNING: '${key}' is missing in '${all}'`);
+            }
+        });
+    }
     function getTypeFromProperties(
         props: {
             [prop: string]: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
