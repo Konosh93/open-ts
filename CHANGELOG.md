@@ -1,3 +1,16 @@
+## 1.0.5 (January 8, 2021)
+### Target Command: `gen-agent`
+- Throw and error and exit process with schema validation error is encountered.
+- Show warning when missing required properties are found.
+
+```
+Validation Error
+Error parsing ~/open-ts/test-files/pet.yaml 
+duplicated mapping key at line 248, column -764:
+          properties:
+          ^
+```
+
 ## 1.0.4 (January 6, 2021)
 - Allow validating required nullable parameters by adding conditional validation using `ValidateIf`.
   - Target Command: `gen-agent`
