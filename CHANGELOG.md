@@ -33,6 +33,19 @@
 ```
 
 ## 1.0.3 (January 3, 2021)
+### Target Command: `gen-agent`
+- Throw and error and exit process with schema validation error is encountered.
+- Show warning when missing required properties are found.
+
+```
+Validation Error
+Error parsing ~/open-ts/test-files/pet.yaml 
+duplicated mapping key at line 248, column -764:
+          properties:
+          ^
+```
+
+## 1.0.3 (January 3, 2021)
 - Allow class validator to validate array of enums.
   - Target Command: `gen-agent`
 
