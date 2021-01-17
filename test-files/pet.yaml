@@ -244,6 +244,11 @@ components:
           type: string 
         color:
           type: string
+        inlineObject:
+          type: object
+          properties:
+            food:
+              type: string
     Customer:
       type: object
       required:
@@ -323,6 +328,11 @@ components:
                 pattern: '[a-zA-Z0-9]'
               petData:
                 $ref: '#/components/schemas/NewPet'
+              inlineObject:
+                type: object
+                properties:
+                  food:
+                    type: string
               petNumberType:
                 $ref: '#/components/schemas/NumberEnum'
               petStringType:
