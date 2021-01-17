@@ -4,6 +4,7 @@ import * as path from "path";
 import { OpenAPIV3 } from "openapi-types";
 import * as cg from "./ts-helpers";
 import * as logs from "../utils/logs";
+import { property } from "lodash";
 
 const verbs = [
     "GET",
@@ -113,12 +114,16 @@ export default function generate(spec: OpenAPIV3.Document) {
     const imports: ts.ImportDeclaration[] = [];
     const classValidatorDecorators = new Set<string>();
     const classTransformerDecorators = new Set<string>();
+    const supportingValidatorClassesRefMap = new Map<string, string>();
+    const supportingValidatorClassNamesMap: {
+        [className: string]: number;
+    } = {};
 
     function resolveIfRef<T>(obj: T | OpenAPIV3.ReferenceObject) {
         if (!isReference(obj)) return obj;
         const ref = obj.$ref;
         if (!ref.startsWith("#/")) {
-            // TODO: Allow external refs
+            // NOTE: No need to support external refs as they will be bundled with the schema
             throw new Error(`External refs are not supported: ${ref}`);
         }
         const path = ref.slice(2).split("/");
@@ -138,7 +143,6 @@ export default function generate(spec: OpenAPIV3.Document) {
         if (!ref) {
             const schema = resolveIfRef<OpenAPIV3.SchemaObject>(obj);
             const name = schema.title || $ref.replace(/.+\//, "");
-
             if (schema.enum) {
                 const enumName = name + "Enum";
                 const enumNode = cg.createEnum(name + "Enum", schema.enum);
@@ -344,12 +348,15 @@ export default function generate(spec: OpenAPIV3.Document) {
     ];
 
     function createValidatorAndTransformers(
-        params: OpenAPIV3.SchemaObject,
+        property:
+            | OpenAPIV3.ArraySchemaObject
+            | OpenAPIV3.NonArraySchemaObject
+            | OpenAPIV3.ReferenceObject,
         propName: string,
         isRequired: boolean,
         enumName?: string
     ) {
-        // console.log(propName, isNullable(params));
+        const params = resolveIfRef(property);
         const dec: ts.Decorator[] = [];
         let isOptional = false;
         if (isRequired) {
@@ -443,8 +450,24 @@ export default function generate(spec: OpenAPIV3.Document) {
                 return dec;
             }
             case "object": {
-                classValidatorDecorators.add("IsObject");
-                dec.push(cg.createDecorator(`IsObject()`));
+                if (!params.properties) {
+                    classValidatorDecorators.add("IsObject");
+                    dec.push(cg.createDecorator(`IsObject()`));
+                    return dec;
+                }
+                const supportingValidatorClass = createSupportingValidatorClass(
+                    property,
+                    propName,
+                    params
+                );
+                dec.push(cg.createDecorator(`ValidateNested()`));
+                dec.push(
+                    cg.createDecorator(
+                        `Type(() => ${supportingValidatorClass}Validator)`
+                    )
+                );
+                classValidatorDecorators.add("ValidateNested");
+                classTransformerDecorators.add("Type");
                 return dec;
             }
             default:
@@ -452,13 +475,42 @@ export default function generate(spec: OpenAPIV3.Document) {
         }
     }
 
+    function createSupportingValidatorClass(
+        property:
+            | OpenAPIV3.ReferenceObject
+            | OpenAPIV3.ArraySchemaObject
+            | OpenAPIV3.NonArraySchemaObject,
+        propName: string,
+        params: OpenAPIV3.NonArraySchemaObject
+    ) {
+        return (() => {
+            if (isReference(property)) {
+                const refClassName = property.$ref.replace(/.+\//, "");
+                if (!supportingValidatorClassesRefMap.has(property.$ref)) {
+                    createValidationClass(resolveIfRef(property), refClassName);
+                }
+                return refClassName;
+            }
+            const currNo = supportingValidatorClassNamesMap[propName];
+            if (currNo === undefined) {
+                supportingValidatorClassNamesMap[propName] = 1;
+            } else {
+                supportingValidatorClassNamesMap[propName] = currNo + 1;
+            }
+            const currClassName =
+                capitalize(propName) +
+                supportingValidatorClassNamesMap[propName];
+            createValidationClass(params, currClassName);
+            return currClassName;
+        })();
+    }
+
     function createValidationClass(
         schema: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject,
         name: string
     ) {
         const { properties, required } = resolveIfRef(schema);
-        const requiredMap: { [p: string]: boolean } = {};
-        (required || []).forEach(p => (requiredMap[p] = true));
+        const requiredMap = getRequiredMap(required);
         if (!properties) {
             // NOTE: Validation classes only work for 'object' bodies with the exception of 'array' objects
             return;
@@ -472,7 +524,7 @@ export default function generate(spec: OpenAPIV3.Document) {
                     return cg.addComment(
                         cg.createProperty(p, {
                             decorators: createValidatorAndTransformers(
-                                obj,
+                                property,
                                 p,
                                 requiredMap[p],
                                 isReference(property)
@@ -700,3 +752,9 @@ export default function generate(spec: OpenAPIV3.Document) {
         return bodyTypeAlias;
     }
 }
+function getRequiredMap(required: string[]) {
+    const requiredMap: { [p: string]: boolean; } = {};
+    (required || []).forEach(p => (requiredMap[p] = true));
+    return requiredMap;
+}
+

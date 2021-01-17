@@ -1,3 +1,46 @@
+## 1.1.0 (January 17, 2021)
+### Target Command: `gen-agent`
+- Allow nested object validation.
+
+```yaml
+  petData:
+    $ref: '#/components/schemas/NewPet'
+  inlineObject:
+    type: object
+    properties:
+      food:
+        type: string
+
+```
+
+```ts
+    /**
+     * petData
+     */
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => NewPetValidator)
+    petData: NewPet;
+    /**
+     * inlineObject
+     */
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => InlineObject2Validator)
+    inlineObject: {
+        food?: string;
+    };
+
+export class NewPetValidator {
+  ...
+}
+export class InlineObject2Validator {
+  ...
+}
+
+```
+
+
 ## 1.0.5 (January 8, 2021)
 ### Target Command: `gen-agent`
 - Throw and error and exit process with schema validation error is encountered.

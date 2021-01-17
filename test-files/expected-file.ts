@@ -1,4 +1,4 @@
-import { IsOptional, IsArray, IsInt, IsNotEmpty, Length, Matches, IsObject, IsEnum, ValidateIf, MinLength, IsEmail, Min, Max, IsBoolean } from "class-validator";
+import { IsOptional, IsArray, IsInt, IsNotEmpty, Length, Matches, ValidateNested, IsEnum, ValidateIf, MinLength, IsEmail, Min, Max, IsBoolean } from "class-validator";
 import { Type } from "class-transformer";
 /*
  * This file is auto-generated. Do NOT modify this file manually.
@@ -31,6 +31,9 @@ export type NewPet = {
     name: string;
     tag?: string;
     color?: string;
+    inlineObject?: {
+        food?: string;
+    };
 };
 export type NumberEnum = number;
 export type StringEnum = string;
@@ -38,6 +41,9 @@ export type PetExternalEnum = number;
 export type AddPetRequestBody = {
     petName: string;
     petData?: NewPet;
+    inlineObject?: {
+        food?: string;
+    };
     petNumberType?: NumberEnum;
     petStringType?: StringEnum;
     petExternalEnum?: PetExternalEnum;
@@ -108,6 +114,46 @@ export class FindPetsQueryValidator {
     @IsInt()
     limit: number;
 }
+export class InlineObject1Validator {
+    /**
+     * food
+     */
+    @IsOptional()
+    food: string;
+}
+export class NewPetValidator {
+    /**
+     * name
+     */
+    @IsNotEmpty()
+    name: string;
+    /**
+     * tag
+     */
+    @IsOptional()
+    tag: string;
+    /**
+     * color
+     */
+    @IsOptional()
+    color: string;
+    /**
+     * inlineObject
+     */
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => InlineObject1Validator)
+    inlineObject: {
+        food?: string;
+    };
+}
+export class InlineObject2Validator {
+    /**
+     * food
+     */
+    @IsOptional()
+    food: string;
+}
 export class AddPetRequestBodyValidator {
     /**
      * petName
@@ -120,8 +166,18 @@ export class AddPetRequestBodyValidator {
      * petData
      */
     @IsOptional()
-    @IsObject()
+    @ValidateNested()
+    @Type(() => NewPetValidator)
     petData: NewPet;
+    /**
+     * inlineObject
+     */
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => InlineObject2Validator)
+    inlineObject: {
+        food?: string;
+    };
     /**
      * petNumberType
      */
@@ -250,6 +306,28 @@ export class UpdateByIdQueryValidator {
     @IsArray()
     tags: string[];
 }
+export class Data1Validator {
+    /**
+     * filename
+     */
+    @IsNotEmpty()
+    filename: string;
+    /**
+     * small
+     */
+    @IsNotEmpty()
+    small: string;
+    /**
+     * medium
+     */
+    @IsNotEmpty()
+    medium: string;
+    /**
+     * large
+     */
+    @IsNotEmpty()
+    large: string;
+}
 export class PostFileJoinRequestBodyValidator {
     /**
      * name
@@ -265,7 +343,8 @@ export class PostFileJoinRequestBodyValidator {
      * data
      */
     @IsOptional()
-    @IsObject()
+    @ValidateNested()
+    @Type(() => Data1Validator)
     data: {
         filename: string;
         small: string;
