@@ -10,7 +10,6 @@
     properties:
       food:
         type: string
-
 ```
 
 ```ts
@@ -37,9 +36,7 @@ export class NewPetValidator {
 export class InlineObject2Validator {
   ...
 }
-
 ```
-
 
 ## 1.0.5 (January 8, 2021)
 ### Target Command: `gen-agent`
