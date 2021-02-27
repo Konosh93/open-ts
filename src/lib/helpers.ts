@@ -439,13 +439,27 @@ export default function generate(spec: OpenAPIV3.Document) {
                 classValidatorDecorators.add("IsArray");
                 dec.push(cg.createDecorator(`IsArray()`));
                 if (isReference(params.items)) {
+                    const nestedObj = resolveIfRef<
+                        OpenAPIV3.NonArraySchemaObject
+                    >(params.items);
                     const enumNameForArray = enumRefsMap[params.items.$ref];
-                    classValidatorDecorators.add("IsEnum");
-                    dec.push(
-                        cg.createDecorator(
-                            `IsEnum(${enumNameForArray}, { each: true })`
-                        )
-                    );
+                    if (nestedObj.enum) {
+                        classValidatorDecorators.add("IsEnum");
+                        dec.push(
+                            cg.createDecorator(
+                                `IsEnum(${enumNameForArray}, { each: true })`
+                            )
+                        );
+                    } else {
+                        dec.push(
+                            ...createNestedObjectValidator(
+                                property,
+                                propName,
+                                nestedObj,
+                                true
+                            )
+                        );
+                    }
                 }
                 return dec;
             }
@@ -455,24 +469,45 @@ export default function generate(spec: OpenAPIV3.Document) {
                     dec.push(cg.createDecorator(`IsObject()`));
                     return dec;
                 }
-                const supportingValidatorClass = createSupportingValidatorClass(
-                    property,
-                    propName,
-                    params
-                );
-                dec.push(cg.createDecorator(`ValidateNested()`));
                 dec.push(
-                    cg.createDecorator(
-                        `Type(() => ${supportingValidatorClass}Validator)`
-                    )
+                    ...createNestedObjectValidator(property, propName, params)
                 );
-                classValidatorDecorators.add("ValidateNested");
-                classTransformerDecorators.add("Type");
                 return dec;
             }
             default:
                 break;
         }
+    }
+
+    function createNestedObjectValidator(
+        property:
+            | OpenAPIV3.ReferenceObject
+            | OpenAPIV3.ArraySchemaObject
+            | OpenAPIV3.NonArraySchemaObject,
+        propName: string,
+        params: OpenAPIV3.NonArraySchemaObject,
+        isArray = false
+    ) {
+        const dec: ts.Decorator[] = [];
+        const arrayItems = (property as OpenAPIV3.ArraySchemaObject).items;
+        const supportingValidatorClass = createSupportingValidatorClass(
+            arrayItems || property,
+            propName,
+            params
+        );
+        dec.push(
+            cg.createDecorator(
+                `ValidateNested(${isArray ? "{ each: true }" : ""})`
+            )
+        );
+        dec.push(
+            cg.createDecorator(
+                `Type(() => ${supportingValidatorClass}Validator)`
+            )
+        );
+        classValidatorDecorators.add("ValidateNested");
+        classTransformerDecorators.add("Type");
+        return dec;
     }
 
     function createSupportingValidatorClass(
@@ -487,6 +522,10 @@ export default function generate(spec: OpenAPIV3.Document) {
             if (isReference(property)) {
                 const refClassName = property.$ref.replace(/.+\//, "");
                 if (!supportingValidatorClassesRefMap.has(property.$ref)) {
+                    supportingValidatorClassesRefMap.set(
+                        property.$ref,
+                        refClassName
+                    );
                     createValidationClass(resolveIfRef(property), refClassName);
                 }
                 return refClassName;
@@ -753,8 +792,7 @@ export default function generate(spec: OpenAPIV3.Document) {
     }
 }
 function getRequiredMap(required: string[]) {
-    const requiredMap: { [p: string]: boolean; } = {};
+    const requiredMap: { [p: string]: boolean } = {};
     (required || []).forEach(p => (requiredMap[p] = true));
     return requiredMap;
 }
-

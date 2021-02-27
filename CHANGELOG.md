@@ -1,3 +1,38 @@
+## 1.1.1 (February 27, 2021)
+### Target Command: `gen-agent`
+- Fix nested array check
+
+```yaml
+  petDataList:
+    type: array
+    items:
+      $ref: '#/components/schemas/NewPet'
+```
+
+#### Before
+```ts
+    /**
+     * petDataList
+     */
+    @IsOptional()
+    @IsArray()
+    @IsEnum(undefined, { each: true })
+    petDataList: NewPet[];
+```
+
+
+#### After
+```ts
+    /**
+     * petDataList
+     */
+    @IsOptional()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => NewPetValidator)
+    petDataList: NewPet[];
+```
+
 ## 1.1.0 (January 17, 2021)
 ### Target Command: `gen-agent`
 - Allow nested object validation.

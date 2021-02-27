@@ -328,6 +328,10 @@ components:
                 pattern: '[a-zA-Z0-9]'
               petData:
                 $ref: '#/components/schemas/NewPet'
+              petDataList:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NewPet'
               inlineObject:
                 type: object
                 properties:
