@@ -11,7 +11,13 @@
 
 #### Before
 ```ts
-
+    /**
+     * petDataList
+     */
+    @IsOptional()
+    @IsArray()
+    @IsEnum(undefined, { each: true })
+    petDataList: NewPet[];
 ```
 
 
