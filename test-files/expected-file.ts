@@ -41,6 +41,7 @@ export type PetExternalEnum = number;
 export type AddPetRequestBody = {
     petName: string;
     petData?: NewPet;
+    petDataList?: NewPet[];
     inlineObject?: {
         food?: string;
     };
@@ -169,6 +170,14 @@ export class AddPetRequestBodyValidator {
     @ValidateNested()
     @Type(() => NewPetValidator)
     petData: NewPet;
+    /**
+     * petDataList
+     */
+    @IsOptional()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => NewPetValidator)
+    petDataList: NewPet[];
     /**
      * inlineObject
      */
