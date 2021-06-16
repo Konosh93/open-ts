@@ -1,4 +1,4 @@
-## 1.2.0 (June 7, 2021)
+## 1.2.0 (June 17, 2021)
 ### Target Command: `gen-agent`
 
 Implemented OpenAPI enum definitions to be generated as TypeScript UnionTypes instead of TypeScript Enums.
