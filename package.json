@@ -1,6 +1,6 @@
 {
   "name": "open-ts",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "OpenAPI to Typescript Code Generator",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,7 +15,7 @@
     "fs-extra": "^9.0.1",
     "js-yaml": "^3.14.1",
     "json-schema-to-typescript": "^8.2.0",
-    "typescript": "^4.1.3"
+    "typescript": "^4.3.3"
   },
   "scripts": {
     "clean": "del build && del node_modules",
