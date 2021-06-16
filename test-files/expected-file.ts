@@ -91,16 +91,16 @@ export type PostFileJoinRequestBody = {
     } | null;
 };
 export const NumberEnum = {
-    1: 1,
-    2: 2
+    _1: 1,
+    _2: 2
 } as const;
 export const StringEnum = {
     a: "a",
     b: "b"
 } as const;
 export const PetExternalEnum = {
-    1: 1,
-    2: 2
+    _1: 1,
+    _2: 2
 } as const;
 export class FindPetsQueryValidator {
     /**

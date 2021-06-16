@@ -582,7 +582,7 @@ export function createUnionTypeValues(
 ) {
     const props = values.map(v =>
         ts.factory.createPropertyAssignment(
-            v.toString(),
+            typeof v === "number" ? "_" + v.toString() : v.toString(),
             typeof v === "string"
                 ? ts.factory.createStringLiteral(v)
                 : ts.factory.createNumericLiteral(v)
