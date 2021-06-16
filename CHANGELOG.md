@@ -1,3 +1,93 @@
+## 1.2.0 (June 17, 2021)
+### Target Command: `gen-agent`
+
+Implemented OpenAPI enum definitions to be generated as TypeScript UnionTypes instead of TypeScript Enums.
+
+#### Input(`api.yaml`)
+```yaml
+NumberEnum:
+  type: number
+  enum:
+    - 1
+    - 2
+StringEnum:
+  type: string
+  enum:
+    - a
+    - b
+PetExternalEnum:
+  $ref: './schemas/fileJoin.yml#/ExternalEnum'
+（-- Abbreviation --）
+petNumberType:
+  $ref: '#/components/schemas/NumberEnum'
+petStringType:
+  $ref: '#/components/schemas/StringEnum'
+petExternalEnum:
+  $ref: '#/components/schemas/PetExternalEnum'
+petListEnum:
+  type: array
+  items:
+    $ref: '#/components/schemas/StringEnum'
+petDirectEnum:
+  type: string
+  enum:
+    - x
+    - y
+    - z
+```
+
+#### Output(`generated.ts`)
+```ts
+export type NumberEnum = typeof NumberEnum[keyof typeof NumberEnum];
+export type StringEnum = typeof StringEnum[keyof typeof StringEnum];
+export type PetExternalEnum = typeof PetExternalEnum[keyof typeof PetExternalEnum];
+export const NumberEnum = {
+    1: 1,
+    2: 2
+} as const;
+export const StringEnum = {
+    a: "a",
+    b: "b"
+} as const;
+export const PetExternalEnum = {
+    1: 1,
+    2: 2
+} as const;
+export class AddPetRequestBodyValidator {
+    /**
+     * petNumberType
+     */
+    @IsOptional()
+    @IsIn(Object.values(NumberEnum))
+    petNumberType: NumberEnum;
+    /**
+     * petStringType
+     */
+    @IsOptional()
+    @IsIn(Object.values(StringEnum))
+    petStringType: StringEnum;
+    /**
+     * petExternalEnum
+     */
+    @IsOptional()
+    @IsIn(Object.values(PetExternalEnum))
+    petExternalEnum: PetExternalEnum;
+    /**
+     * petListEnum
+     */
+    @IsOptional()
+    @IsArray()
+    @IsIn(Object.values(StringEnum), { each: true })
+    petListEnum: StringEnum[];
+    /**
+     * petDirectEnum
+     */
+    @IsOptional()
+    @IsIn(["x","y","z"])
+    petDirectEnum: "x" | "y" | "z";
+}
+```
+
 ## 1.1.1 (February 27, 2021)
 ### Target Command: `gen-agent`
 - Fix nested array check
