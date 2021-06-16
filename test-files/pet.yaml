@@ -347,6 +347,12 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/StringEnum'
+              petDirectEnum:
+                type: string
+                enum:
+                  - x
+                  - y
+                  - z
   responses:
     PetResponseBody:
       description: pet response

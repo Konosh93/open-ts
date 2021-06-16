@@ -4,7 +4,6 @@ import * as path from "path";
 import { OpenAPIV3 } from "openapi-types";
 import * as cg from "./ts-helpers";
 import * as logs from "../utils/logs";
-import { property } from "lodash";
 
 const verbs = [
     "GET",
@@ -54,7 +53,7 @@ const STRING_FORMATS_MAP: FormatsMap = {
     int64: {
         import: "IsInt",
         lib: "validator",
-        syntax: "IsInt",
+        syntax: "IsInt()",
         tsType: "string"
     }
 };
@@ -109,7 +108,7 @@ function queryParamsToObject(
 
 export default function generate(spec: OpenAPIV3.Document) {
     const typeDefinitions: ts.TypeAliasDeclaration[] = [];
-    const enumDeclarations: ts.EnumDeclaration[] = [];
+    const unionTypeValuesDeclarations: ts.VariableStatement[] = [];
     const classes: ts.ClassDeclaration[] = [];
     const imports: ts.ImportDeclaration[] = [];
     const classValidatorDecorators = new Set<string>();
@@ -144,10 +143,10 @@ export default function generate(spec: OpenAPIV3.Document) {
             const schema = resolveIfRef<OpenAPIV3.SchemaObject>(obj);
             const name = schema.title || $ref.replace(/.+\//, "");
             if (schema.enum) {
-                const enumName = name + "Enum";
-                const enumNode = cg.createEnum(name + "Enum", schema.enum);
-                enumRefsMap[$ref] = enumName;
-                enumDeclarations.push(enumNode);
+                const valuesNode = cg.createUnionTypeValues(name, schema.enum);
+                enumRefsMap[$ref] = name;
+                unionTypeValuesDeclarations.push(valuesNode);
+                schema.title = name;
             }
 
             ref = refsMap[$ref] = ts.createTypeReferenceNode(name, undefined);
@@ -208,6 +207,10 @@ export default function generate(spec: OpenAPIV3.Document) {
                 schema.required,
                 schema.additionalProperties
             );
+        }
+
+        if (schema.enum) {
+            return getTypeFromUnionTypeValuesName(schema.title, schema.enum);
         }
 
         const isDate = (() => {
@@ -282,6 +285,32 @@ export default function generate(spec: OpenAPIV3.Document) {
             members.push(cg.createIndexSignature(type));
         }
         return ts.createTypeLiteralNode(members);
+    }
+
+    function getTypeFromUnionTypeValuesName(
+        name: string,
+        values: (string | number)[]
+    ) {
+        if (!name) {
+            return ts.factory.createUnionTypeNode(
+                values.map(v =>
+                    ts.factory.createLiteralTypeNode(
+                        typeof v === "string"
+                            ? ts.factory.createStringLiteral(v)
+                            : ts.factory.createNumericLiteral(v)
+                    )
+                )
+            );
+        }
+        return ts.factory.createIndexedAccessTypeNode(
+            ts.factory.createTypeQueryNode(ts.factory.createIdentifier(name)),
+            ts.factory.createTypeOperatorNode(
+                ts.SyntaxKind.KeyOfKeyword,
+                ts.factory.createTypeQueryNode(
+                    ts.factory.createIdentifier(name)
+                )
+            )
+        );
     }
 
     function getOkResponse(res: OpenAPIV3.ResponsesObject) {
@@ -376,8 +405,13 @@ export default function generate(spec: OpenAPIV3.Document) {
         }
 
         if (enumName) {
-            classValidatorDecorators.add("IsEnum");
-            dec.push(cg.createDecorator(`IsEnum(${enumName})`));
+            classValidatorDecorators.add("IsIn");
+            dec.push(cg.createDecorator(`IsIn(Object.values(${enumName}))`));
+        } else if (params.enum) {
+            classValidatorDecorators.add("IsIn");
+            dec.push(
+                cg.createDecorator(`IsIn(${JSON.stringify(params.enum)})`)
+            );
         }
 
         switch (params.type) {
@@ -444,10 +478,10 @@ export default function generate(spec: OpenAPIV3.Document) {
                     >(params.items);
                     const enumNameForArray = enumRefsMap[params.items.$ref];
                     if (nestedObj.enum) {
-                        classValidatorDecorators.add("IsEnum");
+                        classValidatorDecorators.add("IsIn");
                         dec.push(
                             cg.createDecorator(
-                                `IsEnum(${enumNameForArray}, { each: true })`
+                                `IsIn(Object.values(${enumNameForArray}), { each: true })`
                             )
                         );
                     } else {
@@ -771,7 +805,7 @@ export default function generate(spec: OpenAPIV3.Document) {
         ...imports,
         ...baseFile.statements,
         ...typeDefinitions,
-        ...enumDeclarations,
+        ...unionTypeValuesDeclarations,
         ...classes,
         apiAgentClass
     ]);
