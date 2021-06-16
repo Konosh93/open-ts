@@ -575,3 +575,37 @@ export function createEnum(name: string, values: (string | number)[]) {
         members
     );
 }
+
+export function createUnionTypeValues(
+    name: string,
+    values: (string | number)[]
+) {
+    const props = values.map(v =>
+        ts.factory.createPropertyAssignment(
+            v.toString(),
+            typeof v === "string"
+                ? ts.factory.createStringLiteral(v)
+                : ts.factory.createNumericLiteral(v)
+        )
+    );
+    return ts.factory.createVariableStatement(
+        [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+        ts.factory.createVariableDeclarationList(
+            [
+                ts.factory.createVariableDeclaration(
+                    ts.factory.createIdentifier(name),
+                    undefined,
+                    undefined,
+                    ts.factory.createAsExpression(
+                        ts.factory.createObjectLiteralExpression(props, true),
+                        ts.factory.createTypeReferenceNode(
+                            ts.factory.createIdentifier("const"),
+                            undefined
+                        )
+                    )
+                )
+            ],
+            ts.NodeFlags.Const
+        )
+    );
+}

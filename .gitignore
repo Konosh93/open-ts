@@ -97,6 +97,9 @@ web_modules/
 # FuseBox cache
 .fusebox/
 
+# InteliJ Editor
+.idea
+
 # DynamoDB Local files
 .dynamodb/
 

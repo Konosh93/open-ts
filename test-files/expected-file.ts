@@ -1,4 +1,4 @@
-import { IsOptional, IsArray, IsInt, IsNotEmpty, Length, Matches, ValidateNested, IsEnum, ValidateIf, MinLength, IsEmail, Min, Max, IsBoolean } from "class-validator";
+import { IsOptional, IsArray, IsInt, IsNotEmpty, Length, Matches, ValidateNested, IsIn, ValidateIf, MinLength, IsEmail, Min, Max, IsBoolean } from "class-validator";
 import { Type } from "class-transformer";
 /*
  * This file is auto-generated. Do NOT modify this file manually.
@@ -35,9 +35,9 @@ export type NewPet = {
         food?: string;
     };
 };
-export type NumberEnum = number;
-export type StringEnum = string;
-export type PetExternalEnum = number;
+export type NumberEnum = typeof NumberEnum[keyof typeof NumberEnum];
+export type StringEnum = typeof StringEnum[keyof typeof StringEnum];
+export type PetExternalEnum = typeof PetExternalEnum[keyof typeof PetExternalEnum];
 export type AddPetRequestBody = {
     petName: string;
     petData?: NewPet;
@@ -49,6 +49,7 @@ export type AddPetRequestBody = {
     petStringType?: StringEnum;
     petExternalEnum?: PetExternalEnum;
     petListEnum?: StringEnum[];
+    petDirectEnum?: "x" | "y" | "z";
 };
 export type AddPetResponseBody = Pet;
 export type GetCustomerQuery = {
@@ -89,18 +90,18 @@ export type PostFileJoinRequestBody = {
         large: string;
     } | null;
 };
-enum NumberEnumEnum {
-    _1 = 1,
-    _2 = 2
-}
-enum StringEnumEnum {
-    _a = "a",
-    _b = "b"
-}
-enum PetExternalEnumEnum {
-    _1 = 1,
-    _2 = 2
-}
+export const NumberEnum = {
+    1: 1,
+    2: 2
+} as const;
+export const StringEnum = {
+    a: "a",
+    b: "b"
+} as const;
+export const PetExternalEnum = {
+    1: 1,
+    2: 2
+} as const;
 export class FindPetsQueryValidator {
     /**
      * tags to filter by
@@ -191,27 +192,33 @@ export class AddPetRequestBodyValidator {
      * petNumberType
      */
     @IsOptional()
-    @IsEnum(NumberEnumEnum)
+    @IsIn(Object.values(NumberEnum))
     petNumberType: NumberEnum;
     /**
      * petStringType
      */
     @IsOptional()
-    @IsEnum(StringEnumEnum)
+    @IsIn(Object.values(StringEnum))
     petStringType: StringEnum;
     /**
      * petExternalEnum
      */
     @IsOptional()
-    @IsEnum(PetExternalEnumEnum)
+    @IsIn(Object.values(PetExternalEnum))
     petExternalEnum: PetExternalEnum;
     /**
      * petListEnum
      */
     @IsOptional()
     @IsArray()
-    @IsEnum(StringEnumEnum, { each: true })
+    @IsIn(Object.values(StringEnum), { each: true })
     petListEnum: StringEnum[];
+    /**
+     * petDirectEnum
+     */
+    @IsOptional()
+    @IsIn(["x","y","z"])
+    petDirectEnum: "x" | "y" | "z";
 }
 export class GetCustomerQueryValidator {
     /**
@@ -292,7 +299,7 @@ export class FindPetByIdQueryValidator {
      * Language
      */
     @IsNotEmpty()
-    @IsInt
+    @IsInt()
     lang: string;
 }
 export class UpdateByIdQueryValidator {
@@ -300,13 +307,13 @@ export class UpdateByIdQueryValidator {
      * Language
      */
     @IsNotEmpty()
-    @IsInt
+    @IsInt()
     lang: string;
     /**
      * Color
      */
     @IsOptional()
-    @IsInt
+    @IsInt()
     color: string;
     /**
      * Tags List
