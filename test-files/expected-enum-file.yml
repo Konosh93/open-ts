@@ -7,6 +7,16 @@ Numbers:
   enum:
     - 1
     - 2
+ObjectEnumNum:
+  type: number
+  enum:
+    - 1
+    - 2
+ObjectEnumStr:
+  type: string
+  enum:
+    - FOO
+    - BAR
 SpecialString:
   type: string
   enum:
