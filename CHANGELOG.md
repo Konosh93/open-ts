@@ -1,3 +1,60 @@
+## 1.3.0 (September 6, 2021)
+### Target Command: `convert-enums`
+- Add generation of openAPI enums as yaml file from all object literals annotated by `const` keyword in a given directory.
+
+#### Input
+```ts
+const ObjectEnumStr = {
+    Foo: "FOO",
+    Bar: "BAR"
+} as const;
+
+const ObjectEnumNum = {
+    One: 1,
+    Bar: 2
+} as const;
+
+const ObjectEnumWithFunc = {
+    func: () => 1
+} as const;
+
+const ObjectEnumWithBool = {
+    bool: true
+} as const;
+
+const MixedObjectEnum = {
+    Foo: "FOO",
+    One: 1
+} as const;
+
+const ObjectEnumEmpty = {} as const;
+
+/* open-ts: ignore-convert-enums */
+const ObjectEnumIgnored = {
+    Baz: "BAZ",
+    Qux: "QUX"
+} as const;
+
+const ObjectEnumMutable = {
+    Quux: "QUUX",
+    quuz: "QUUZ"
+};
+```
+
+#### Output
+```yaml
+ObjectEnumNum:
+  type: number
+  enum:
+    - 1
+    - 2
+ObjectEnumStr:
+  type: string
+  enum:
+    - FOO
+    - BAR
+```
+
 ## 1.2.0 (June 17, 2021)
 ### Target Command: `gen-agent`
 
