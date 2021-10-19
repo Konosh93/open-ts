@@ -594,7 +594,6 @@ export default function generate(spec: OpenAPIV3.Document) {
                 modifiers: [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
                 members: Object.keys(properties).map(p => {
                     const property = properties[p];
-                    const isNullable = (property as any)?.nullable;
                     const obj = resolveIfRef(property);
                     return cg.addComment(
                         cg.createProperty(p, {
@@ -602,7 +601,7 @@ export default function generate(spec: OpenAPIV3.Document) {
                                 property,
                                 p,
                                 requiredMap[p],
-                                isNullable,
+                                isNullable(property),
                                 isReference(property)
                                     ? enumRefsMap[property.$ref]
                                     : undefined
