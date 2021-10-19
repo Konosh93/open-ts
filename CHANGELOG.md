@@ -1,3 +1,7 @@
+## 1.3.1 (October 19, 2021)
+### Target Command: `gen-agent`
+- `$ref` is not validated correctly when it has `nullable: true`
+
 ## 1.3.0 (September 6, 2021)
 ### Target Command: `convert-enums`
 - Add generation of openAPI enums as yaml file from all object literals annotated by `const` keyword in a given directory.

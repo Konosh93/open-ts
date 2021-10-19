@@ -1,4 +1,4 @@
-import { IsOptional, IsArray, IsInt, IsNotEmpty, Length, Matches, ValidateNested, IsIn, ValidateIf, MinLength, IsEmail, Min, Max, IsBoolean } from "class-validator";
+import { IsOptional, IsArray, IsInt, IsNotEmpty, Length, Matches, ValidateNested, ValidateIf, IsIn, MinLength, IsEmail, Min, Max, IsBoolean } from "class-validator";
 import { Type } from "class-transformer";
 /*
  * This file is auto-generated. Do NOT modify this file manually.
@@ -45,7 +45,7 @@ export type AddPetRequestBody = {
     inlineObject?: {
         food?: string;
     };
-    petNumberType?: NumberEnum;
+    petNumberType: NumberEnum | null;
     petStringType?: StringEnum;
     petExternalEnum?: PetExternalEnum;
     petListEnum?: StringEnum[];
@@ -191,7 +191,8 @@ export class AddPetRequestBodyValidator {
     /**
      * petNumberType
      */
-    @IsOptional()
+    @IsNotEmpty()
+    @ValidateIf(o => o.petNumberType !== null)
     @IsIn(Object.values(NumberEnum))
     petNumberType: NumberEnum;
     /**
