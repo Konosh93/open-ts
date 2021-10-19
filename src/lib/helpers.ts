@@ -383,6 +383,7 @@ export default function generate(spec: OpenAPIV3.Document) {
             | OpenAPIV3.ReferenceObject,
         propName: string,
         isRequired: boolean,
+        isNullable: boolean,
         enumName?: string
     ) {
         const params = resolveIfRef(property);
@@ -397,7 +398,7 @@ export default function generate(spec: OpenAPIV3.Document) {
             dec.push(cg.createDecorator("IsOptional()"));
         }
 
-        if (!isOptional && isNullable(params)) {
+        if (!isOptional && isNullable) {
             classValidatorDecorators.add("ValidateIf");
             dec.push(
                 cg.createDecorator(`ValidateIf(o => o.${propName} !== null)`)
@@ -593,6 +594,7 @@ export default function generate(spec: OpenAPIV3.Document) {
                 modifiers: [ts.createModifier(ts.SyntaxKind.ExportKeyword)],
                 members: Object.keys(properties).map(p => {
                     const property = properties[p];
+                    const isNullable = (property as any)?.nullable;
                     const obj = resolveIfRef(property);
                     return cg.addComment(
                         cg.createProperty(p, {
@@ -600,6 +602,7 @@ export default function generate(spec: OpenAPIV3.Document) {
                                 property,
                                 p,
                                 requiredMap[p],
+                                isNullable,
                                 isReference(property)
                                     ? enumRefsMap[property.$ref]
                                     : undefined
