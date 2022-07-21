@@ -1,3 +1,7 @@
+## 1.3.2 (July 22, 2022)
+### Target Command: all
+- Bump Typescript version
+
 ## 1.3.1 (October 19, 2021)
 ### Target Command: `gen-agent`
 - `$ref` is not validated correctly when it has `nullable: true`
