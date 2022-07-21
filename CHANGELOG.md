@@ -1,3 +1,7 @@
+## 1.3.3 (July 22, 2022)
+### Target Command: all
+- Fix bug introduced in previous version
+
 ## 1.3.2 (July 22, 2022)
 ### Target Command: all
 - Bump Typescript version

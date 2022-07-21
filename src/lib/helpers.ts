@@ -774,6 +774,7 @@ export default function generate(spec: OpenAPIV3.Document) {
                 ts.createNamedImports(
                     Array.from<string>(classValidatorDecorators).map(v =>
                         ts.createImportSpecifier(
+                            false,
                             undefined,
                             ts.createIdentifier(v)
                         )
@@ -793,8 +794,9 @@ export default function generate(spec: OpenAPIV3.Document) {
                 ts.createNamedImports(
                     Array.from<string>(classTransformerDecorators).map(v =>
                         ts.createImportSpecifier(
+                            false,
                             undefined,
-                            ts.createIdentifier(v)
+                            ts.createIdentifier(v),
                         )
                     )
                 ),

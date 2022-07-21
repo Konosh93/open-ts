@@ -35,9 +35,9 @@ export type NewPet = {
         food?: string;
     };
 };
-export type NumberEnum = typeof NumberEnum[keyof typeof NumberEnum];
-export type StringEnum = typeof StringEnum[keyof typeof StringEnum];
-export type PetExternalEnum = typeof PetExternalEnum[keyof typeof PetExternalEnum];
+export type NumberEnum = (typeof NumberEnum)[keyof typeof NumberEnum];
+export type StringEnum = (typeof StringEnum)[keyof typeof StringEnum];
+export type PetExternalEnum = (typeof PetExternalEnum)[keyof typeof PetExternalEnum];
 export type AddPetRequestBody = {
     petName: string;
     petData?: NewPet;
