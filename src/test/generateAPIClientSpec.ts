@@ -1,4 +1,4 @@
-import * as ava from "ava";
+import ava from "ava";
 import { generateAPIClient } from "../lib";
 import * as path from "path";
 import * as fs from "fs-extra";
