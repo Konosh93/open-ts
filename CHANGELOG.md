@@ -1,3 +1,7 @@
+## 1.3.4 (Dec 21, 2022)
+### Target Command: all
+- Lock typescript version to `~4.7.4` as `~4.9.4` seems to have breaking changes.
+
 ## 1.3.3 (July 22, 2022)
 ### Target Command: all
 - Fix bug introduced in previous version
